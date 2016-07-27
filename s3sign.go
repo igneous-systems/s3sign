@@ -15,6 +15,7 @@ import (
 
 var id, key string
 var duration time.Duration
+var method string
 
 // Query parameters that should be used in signing the request.
 var canonParams = map[string]bool{
@@ -46,6 +47,7 @@ func main() {
 	flag.StringVar(&id, "id", "", "access key")
 	flag.StringVar(&key, "key", "", "secret key")
 	flag.DurationVar(&duration, "d", time.Hour, "duration to expiration")
+	flag.StringVar(&method, "method", "GET", "HTTP method to sign for")
 	flag.Usage = func() {
 		fmt.Fprintln(os.Stderr, "Usage: s3sign <url>")
 		flag.PrintDefaults()
@@ -80,7 +82,7 @@ func main() {
 
 func sign(u *url.URL, expires int64) string {
 	hmac := hmac.New(sha1.New, []byte(key))
-	fmt.Fprintf(hmac, "GET\n\n\n%d\n%s", expires, canonicalizedResource(u))
+	fmt.Fprintf(hmac, "%s\n\n\n%d\n%s", method, expires, canonicalizedResource(u))
 	return base64.StdEncoding.EncodeToString(hmac.Sum(nil))
 }
 

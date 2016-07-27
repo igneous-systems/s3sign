@@ -7,3 +7,5 @@
 				access key
 		-key string
 				secret key
+		-method string
+				HTTP method to sign for (default "GET")
